@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/whitesll/plactice/routes"
-
 	"github.com/gin-gonic/gin"
+	"github.com/whitesll/practice/routes"
+	"github.com/whitesll/practice/sessions"
 )
 
 func main() {
@@ -11,10 +11,14 @@ func main() {
 	router.LoadHTMLGlob("views/*.html")
 	router.Static("/assets", "./assets")
 
+	store := sessions.NewDummyStore()
+	router.Use(sessions.StartDefaultSession(store))
+
 	user := router.Group("/user")
 	{
 		user.POST("/signup", routes.UserSignUp)
 		user.POST("/login", routes.UserLogIn)
+		user.POST("/logout", routes.UserLogOut)
 	}
 
 	router.GET("/", routes.Home)
@@ -23,4 +27,5 @@ func main() {
 	router.NoRoute(routes.NoRoute)
 
 	router.Run(":8080")
+
 }
